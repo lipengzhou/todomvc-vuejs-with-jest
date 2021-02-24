@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TodoHeader 组件外观正常 1`] = `
+<header
+  class="header"
+>
+  <h1>
+    todos
+  </h1>
+   
+  <input
+    class="new-todo"
+    placeholder="What needs to be done?"
+  />
+</header>
+`;
