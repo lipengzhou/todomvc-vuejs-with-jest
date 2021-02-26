@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import TodoApp from '..'
 import { shallowMount } from '@vue/test-utils'
+import TodoHeader from '../TodoHeader.vue'
 
-/** @type {import('@vue/test-utils').Wrapper} */
+/** @type {impor('@vue/test-utils').Wrapper} */
 let wrapper = null
 
 beforeEach(async () => {
@@ -27,10 +28,15 @@ beforeEach(async () => {
   await Vue.nextTick()
 })
 
-test('添加任务正常', async () => {
-  wrapper.vm.handleNewTodo('test')
-  await Vue.nextTick()
-  expect(wrapper.find('.todo-list').findAll('li').length).toBe(4)
+describe('description', () => {
+  test('添加任务正常', async () => {
+    const todoHeader = wrapper.findComponent(TodoHeader)
+    // const todoHeader = wrapper.findComponent({ name: 'TodoHeader' })
+    // wrapper.vm.handleNewTodo('test')
+    todoHeader.vm.$emit('new-todo', 'test')
+    await Vue.nextTick()
+    expect(wrapper.find('.todo-list').findAll('li').length).toBe(4)
+  })
 })
 
 test('展示所有任务列表正常', async () => {
@@ -152,44 +158,45 @@ describe('编辑任务', () => {
   })
 })
 
-test.only('筛选展示所有未完成任务列表正常', async () => {
-  // console.log(jest.jsdom)
-  // delete window.location
-  // window.location = {
-  //   ...window.location
-  // }
-  // document.location.href = 'xxx'
-  // Object.defineProperty(window.location, 'href', {
-  //   writable: true,
-  //   value: 'https://www.somthing.com/test.html?query=true'
-  // })
-  // Object
-  // jest.
-  // console.log(window.location.hash)
-  // window.location.hash = '#/active'
-  // window.location.href = '/#/active'
-  // window.location.foo = 'bar'
-  // Object.defineProperty(window, 'location', {
-  //   value: {
-  //     hash: 'abc'
-  //   },
-  //   writable: true
-  // })
-  // console.log(123)
-  // await Promise.resolve(r => r())
-  // jest.useFakeTimers()
-  // const fn = jest.fn(() => {
-
-  // })
-
-  // await wrapper.vm.handleHashchange()
-  // await Vue.nextTick()
-  // expect(wrapper.find('.todo-list').findAll('li').length).toBe(1)
+test('筛选展示所有未完成任务列表正常', async () => {
+  window.location.hash = '#/active'
+  wrapper.vm.handleHashchange()
+  await Vue.nextTick()
   // 视图中的任务列表是对的
+  expect(wrapper.find('.todo-list').findAll('li').length).toBe(1)
   // a 链接样式正确
+  expect(wrapper.find('.filters').findAll('a').at(1).classes()).toContain('selected')
 })
 
-test('筛选展示所有已完成任务列表正常', () => {
+test('筛选展示所有已完成任务列表正常', async () => {
   window.location.hash = '#/completed'
-  console.log('正常')
+  wrapper.vm.handleHashchange()
+  await Vue.nextTick()
+  // 视图中的任务列表是对的
+  expect(wrapper.find('.todo-list').findAll('li').length).toBe(2)
+  // a 链接样式正确
+  expect(wrapper.find('.filters').findAll('a').at(2).classes()).toContain('selected')
 })
+
+// test('数据持久化正常', async () => {
+//   // window.localStorage.setItem('foo', 'bar')
+//   // console.log(window.localStorage.getItem('todos'))
+
+//   wrapper.vm.handleNewTodo('test')
+
+//   await Vue.nextTick()
+
+//   // console.log(window.localStorage.getItem('todos'))
+
+//   // window.location.reload()
+
+//   // 刷新页面
+//   window.location.replace(window.location.href)
+
+//   await Vue.nextTick()
+
+//   console.log(wrapper.vm.todos)
+
+//   // 查看本地存储是否有数据
+//   // console.log(window.localStorage.getItem('todos'))
+// })

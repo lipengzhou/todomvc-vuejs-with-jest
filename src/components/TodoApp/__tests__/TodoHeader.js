@@ -15,26 +15,26 @@ test('TodoHeader 组件外观正常', () => {
   expect(wrapper.element).toMatchSnapshot()
 })
 
-test('TodoHeader 组件需要包含 input 文本框', () => {
-  const wrapper = shallowMount(TodoHeader)
-  const input = wrapper.find('.new-todo')
-  expect(input.exists()).toBeTruthy()
-})
+// test('TodoHeader 组件需要包含 input 文本框', () => {
+//   const wrapper = shallowMount(TodoHeader)
+//   const input = wrapper.find('.new-todo')
+//   expect(input.exists()).toBeTruthy()
+// })
 
-test('input value 初始为空', () => {
-  expect(input.element.value).toBe('')
-})
+// test('input value 初始为空', () => {
+//   expect(input.element.value).toBe('')
+// })
 
-test('input value 双向数据绑定正常', async () => {
-  // 数据影响视图
-  wrapper.vm.inputValue = 'hello'
-  await wrapper.vm.$nextTick()
-  expect(input.element.value).toBe('hello')
+// test('input value 双向数据绑定正常', async () => {
+//   // 数据影响视图
+//   wrapper.vm.inputValue = 'hello'
+//   await wrapper.vm.$nextTick()
+//   expect(input.element.value).toBe('hello')
 
-  // 视图影响数据
-  input.setValue('world')
-  expect(wrapper.vm.inputValue).toBe('world')
-})
+//   // 视图影响数据
+//   input.setValue('world')
+//   expect(wrapper.vm.inputValue).toBe('world')
+// })
 
 test('input 回车事件无内容什么也不做', async () => {
   input.setValue('')
@@ -44,8 +44,10 @@ test('input 回车事件无内容什么也不做', async () => {
 
 test('input 回车事件有内容发布 new-todo 事件', async () => {
   // 有内容，发布 new-todo 事件
-  input.setValue('吃饭')
+  const text = 'eat'
+  input.setValue(text)
   await input.trigger('keyup.enter')
   expect(wrapper.emitted()['new-todo']).toBeTruthy()
+  expect(wrapper.emitted()['new-todo'][0][0]).toBe(text)
   expect(wrapper.vm.inputValue).toBe('')
 })

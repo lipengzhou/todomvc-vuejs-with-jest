@@ -53,13 +53,13 @@
       <!-- Remove this if you don't implement routing -->
       <ul class="filters">
         <li>
-          <a :class="{ selected: hash === '/' }" href="#/">All</a>
+          <a :class="{ selected: filterText === 'all' }" href="#/">All</a>
         </li>
         <li>
-          <a :class="{ selected: hash === '/active' }" href="#/active">Active</a>
+          <a :class="{ selected: filterText === 'active' }" href="#/active">Active</a>
         </li>
         <li>
-          <a :class="{ selected: hash === '/completed' }" href="#/completed">Completed</a>
+          <a :class="{ selected: filterText === 'completed' }" href="#/completed">Completed</a>
         </li>
       </ul>
       <!-- Hidden if no completed items are left ↓ -->
@@ -78,26 +78,28 @@ export default {
   },
   data () {
     return {
-      todos: [
-        {
-          id: 1,
-          text: 'eat',
-          done: true
-        },
-        {
-          id: 2,
-          text: 'sleep',
-          done: true
-        },
-        {
-          id: 3,
-          text: 'play',
-          done: false
-        }
-      ], // 任务列表
-      filterTodos: [], // 筛选的任务列表
+      todos: JSON.parse(window.localStorage.getItem('todos') || '[]'),
+      // todos: [
+      //   {
+      //     id: 1,
+      //     text: 'eat',
+      //     done: true
+      //   },
+      //   {
+      //     id: 2,
+      //     text: 'sleep',
+      //     done: true
+      //   },
+      //   {
+      //     id: 3,
+      //     text: 'play',
+      //     done: false
+      //   }
+      // ], // 任务列表
+      // filterTodos: [], // 筛选的任务列表
       editTodo: null, // 当前编辑的任务
-      hash: '/'
+      // hash: '/',
+      filterText: 'all'
     }
   },
   computed: {
@@ -113,10 +115,32 @@ export default {
           t.done = value
         })
       }
+    },
+    filterTodos () {
+      const { filterText, todos } = this
+      if (filterText === 'active') {
+        return todos.filter(t => !t.done)
+      } else if (filterText === 'completed') {
+        return todos.filter(t => t.done)
+      } else {
+        return todos
+      }
     }
   },
+  // watch: {
+  //   todos: {
+  //     deep: true,
+  //     handler (value) {
+  //       console.log('watch todos', value)
+  //       window.localStorage.setItem('todos', JSON.stringify(value))
+  //     }
+  //   }
+  // },
   created () {
     this.handleHashchange()
+    // window.addEventListener('hashchange', () => {
+    //   this.handleHashchange()
+    // })
     window.onhashchange = this.handleHashchange.bind(this)
   },
   methods: {
@@ -173,20 +197,19 @@ export default {
     },
 
     handleHashchange () {
-      console.log('handleHashchange', document.location.href)
       const href = window.location.hash.substring(1)
       switch (href) {
+        case '/':
+          this.filterText = 'all'
+          break
         case '/active':
-          this.filterTodos = this.todos.filter(t => !t.done)
-          this.hash = '/active'
+          this.filterText = 'active'
           break
         case '/completed':
-          this.filterTodos = this.todos.filter(t => t.done)
-          this.hash = '/completed'
+          this.filterText = 'completed'
           break
         default:
-          this.filterTodos = this.todos
-          this.hash = '/'
+          this.filterText = 'all'
           break
       }
     }
